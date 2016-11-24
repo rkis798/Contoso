@@ -28,8 +28,8 @@ namespace Bot
 
                 string userMessage = activity.Text;
 
-
                 StateClient stateClient = activity.GetStateClient();
+
                 BotData userData = await stateClient.BotState.GetUserDataAsync(activity.ChannelId, activity.From.Id);
 
                 bool isWeatherRequest = true;
@@ -39,7 +39,7 @@ namespace Bot
                 // calculate something for us to return
                 if (userData.GetProperty<bool>("SentGreeting"))
                 {
-                    endOutput = "Hello again";
+                    endOutput = "Hello again" + activity.Text;
                 }
                 else
                 {
