@@ -9,6 +9,7 @@ using Microsoft.Bot.Connector;
 using Newtonsoft.Json;
 using Bot_Application1.Models;
 using System.Collections.Generic;
+using Microsoft.WindowsAzure.MobileServices;
 
 namespace Bot_Application1
 {
@@ -89,7 +90,7 @@ namespace Bot_Application1
 
                     ReceiptCard plCard = new ReceiptCard()
                     {
-                        Title = "NZD Foreign Exchange Rates",
+                        Title = "NZD Foreign Exchange Rates as at " + date,
                         Items = receiptList,
                     };
 
@@ -98,7 +99,56 @@ namespace Bot_Application1
                     await connector.Conversations.SendToConversationAsync(replyToConversation);
 
                 }
-                else if (activity.Text.ToLower().Contains("thanks") || activity.Text.ToLower().Contains("thank you"))
+                else if (activity.Text.ToLower().Contains("branch"))
+                {
+                    List<Branch> branches = await AzureManager.AzureManagerInstance.GetBranches();
+                    string endOutput = "Here are the local branches: \n\n";
+                    foreach (Branch t in branches)
+                    {
+                        endOutput += t.Name + " Branch, Phone: " + t.Phone + ", Manager: " + t.Manager + "\n\n";
+                    }
+                    Activity reply = activity.CreateReply(endOutput);
+                    await connector.Conversations.ReplyToActivityAsync(reply);
+                }
+                else if (activity.Text.ToLower().Contains("credit") || activity.Text.ToLower().Contains("card"))
+                {
+                    List<Creditcard> creditcards = await AzureManager.AzureManagerInstance.GetCreditcards();
+                    Activity replyToConversation = activity.CreateReply("Here are our credit cards:");
+                    replyToConversation.Recipient = activity.From;
+                    replyToConversation.Type = "message";
+                    replyToConversation.Attachments = new List<Attachment>();
+
+                    string endOutput = "";
+                    foreach (Creditcard t in creditcards)
+                    {
+                        endOutput += t.Name + " Branch, Phone: " + t.Desc + ", Manager: " + t.Img + "\n\n";
+                        List<CardImage> cardImages = new List<CardImage>();
+                        cardImages.Add(new CardImage(url: t.Img));
+
+                        List<CardAction> cardButtons = new List<CardAction>();
+                        CardAction plButton = new CardAction()
+                        {
+                            Value = "http://msa.ms",
+                            Type = "openUrl",
+                            Title = "Contoso Website"
+                        };
+                        cardButtons.Add(plButton);
+
+                        ThumbnailCard plCard = new ThumbnailCard()
+                        {
+                            Title = t.Name,
+                            Text = t.Desc,
+                            Buttons = cardButtons,
+                            Images = cardImages
+                        };
+                        Attachment plAttachment = plCard.ToAttachment();
+                        replyToConversation.Attachments.Add(plAttachment);
+                    }
+
+                    var reply = await connector.Conversations.SendToConversationAsync(replyToConversation);
+                }
+
+                else if (activity.Text.ToLower().Equals("thanks") || activity.Text.ToLower().Equals("thank you"))
                 {
                     Activity reply = activity.CreateReply($"You're welcome");
                     await connector.Conversations.ReplyToActivityAsync(reply);

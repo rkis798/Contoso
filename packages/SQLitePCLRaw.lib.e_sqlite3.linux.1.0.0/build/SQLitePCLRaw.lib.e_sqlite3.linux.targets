@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Automatically generated-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Target Name="InjectReference_1ece358f-6543-4a44-928f-74664ce8ebc3" BeforeTargets="ResolveAssemblyReferences">
+    <ItemGroup Condition=" '$(OS)' == 'Unix' AND !Exists('/Library/Frameworks') ">
+      <Content Include="$(MSBuildThisFileDirectory)..\build\native\linux\x64\libe_sqlite3.so">
+        <Link>libe_sqlite3.so</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+  </Target>
+  <PropertyGroup>
+    <ResolveAssemblyReferencesDependsOn>$(ResolveAssemblyReferencesDependsOn);InjectReference_1ece358f-6543-4a44-928f-74664ce8ebc3</ResolveAssemblyReferencesDependsOn>
+  </PropertyGroup>
+</Project>
