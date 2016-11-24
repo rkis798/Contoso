@@ -153,9 +153,14 @@ namespace Bot_Application1
                     Activity reply = activity.CreateReply($"You're welcome");
                     await connector.Conversations.ReplyToActivityAsync(reply);
                 }
+                else if (activity.Text.ToLower().Equals("help") || activity.Text.ToLower().Equals("options"))
+                {
+                    Activity reply = activity.CreateReply($"You can view today's foreign exchange rates, our credit cards or the local branch details. Just ask :)");
+                    await connector.Conversations.ReplyToActivityAsync(reply);
+                }
                 else
                 {
-                    Activity reply = activity.CreateReply($"I'm sorry I don't understand?");
+                    Activity reply = activity.CreateReply($"I'm sorry I don't understand? Type 'help' for options");
                     await connector.Conversations.ReplyToActivityAsync(reply);
                 }
 
